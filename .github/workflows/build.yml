@@ -10,10 +10,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Repository
+    - name: Checkout Code
       uses: actions/checkout@v4
 
-    - name: Set up Java 17
+    - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
         java-version: '17'
@@ -22,15 +22,16 @@ jobs:
     - name: Set up Android SDK
       uses: android-actions/setup-android@v3
 
-    - name: Generate Gradle Wrapper
+    - name: Accept Android Licenses
+      run: yes | sdkmanager --licenses || true
+
+    - name: Create Gradle Wrapper
       run: |
         gradle wrapper --gradle-version 8.4
-
-    - name: Grant Execute Permission for Gradlew
-      run: chmod +x gradlew
+        chmod +x gradlew
 
     - name: Build Debug APK
-      run: ./gradlew assembleDebug --stacktrace
+      run: ./gradlew assembleDebug --no-daemon
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
